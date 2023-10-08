@@ -10,7 +10,7 @@ def clean(text):
 # Make a folder for this email (named after the subject)
 # File path in based on mail subject, within the data folder
 def create_file_path_for(subject, filename):
-    folder_name = clean(subject)
+    folder_name = os.path.join("data", clean(subject))
     if not os.path.isdir(folder_name):
         os.mkdir(folder_name)
     return os.path.join(folder_name, filename)
