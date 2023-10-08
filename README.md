@@ -6,7 +6,7 @@ This is a python routine reading emails from an IMAP account.
 
 		`python3 read-google.py`
 		
-	or for a generic email (WIP, only connecting)
+	or for a generic email
 		
 		`python3 read.py`
 
