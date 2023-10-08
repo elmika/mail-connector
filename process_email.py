@@ -44,9 +44,9 @@ def download_attachment(part, subject):
         open(filepath, "wb").write(part.get_payload(decode=True))
 
 # Download index.html in folder with subject name
-def download_html(part, subject):
+def download_html(body, subject):
     # if it's HTML, create a new HTML file and open it in browser
-    folder_name = clean(get_subject(msg))
+    folder_name = clean(subject)
     if not os.path.isdir(folder_name):
         # make a folder for this email (named after the subject)
         os.mkdir(folder_name)
@@ -72,11 +72,12 @@ def process_email(res, msg):
             if msg.is_multipart():
                 # iterate over email parts
                 for part in msg.walk():
+                    content_type = part.get_content_type()
                     try:                         
                         body = get_email_body(part)                        
                     except:
                         pass
-                    if is_plain_text_body(part):                        
+                    if is_plain_text_body(part):
                         print(body)
                     elif has_attachment(part):
                         download_attachment(part, get_subject(msg))
@@ -87,9 +88,10 @@ def process_email(res, msg):
                     # print only text email parts
                     print(body)
 
-                if content_type == "text/html":
-                    filepath = download_html()                  
-                    # open in the default browser
-                    webbrowser.open(filepath)
+            # This is a bit shaggy... It will read content type of last multipart message.
+            if content_type == "text/html":
+                filepath = download_html(body, get_subject(msg))
+                # open in the default browser
+                webbrowser.open(filepath)
             print("="*100)
     return
