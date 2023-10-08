@@ -4,8 +4,16 @@ import webbrowser
 import os
 
 # clean text for creating a folder
-def clean(text):
+def clean(text):    
     return "".join(c if c.isalnum() else "_" for c in text)
+    # return os.path.join(folder_root, folder_name)
+# Make a folder for this email (named after the subject)
+# File path in based on mail subject, within the data folder
+def create_file_path_for(subject, filename):
+    folder_name = clean(subject)
+    if not os.path.isdir(folder_name):
+        os.mkdir(folder_name)
+    return os.path.join(folder_name, filename)
 
 def get_subject(msg):
     # decode the email subject
@@ -35,23 +43,15 @@ def has_attachment(part):
 def download_attachment(part, subject):
     filename = part.get_filename()
     if filename:
-        folder_name = clean(subject)
-        if not os.path.isdir(folder_name):
-            # make a folder for this email (named after the subject)
-            os.mkdir(folder_name)
-        filepath = os.path.join(folder_name, filename)
+        filepath = create_file_path_for(subject, filename)        
         # download attachment and save it
         open(filepath, "wb").write(part.get_payload(decode=True))
 
 # Download index.html in folder with subject name
+# returns the name of the created file
 def download_html(body, subject):
     # if it's HTML, create a new HTML file and open it in browser
-    folder_name = clean(subject)
-    if not os.path.isdir(folder_name):
-        # make a folder for this email (named after the subject)
-        os.mkdir(folder_name)
-    filename = "index.html"
-    filepath = os.path.join(folder_name, filename)
+    filepath = create_file_path_for(subject, "index.html")    
     # write the file
     open(filepath, "w").write(body)
     return filepath
@@ -93,5 +93,6 @@ def process_email(res, msg):
                 filepath = download_html(body, get_subject(msg))
                 # open in the default browser
                 webbrowser.open(filepath)
+
             print("="*100)
     return
