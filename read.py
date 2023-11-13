@@ -22,7 +22,7 @@ messages = int(messages[0])
 for i in range(messages, max(messages-N, 0), -1):
 	# fetch the email message by ID
 	res, msg = imap.fetch(str(i), "(RFC822)")
-	process_email(res, msg)
+	process_email(msg)
 
 # close the connection and logout
 imap.close()

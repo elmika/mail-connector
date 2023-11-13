@@ -62,7 +62,7 @@ def download_html(body, subject):
 def get_email_body(msg_or_part):
     return msg_or_part.get_payload(decode=True).decode()
 
-def process_email(res, msg):
+def process_email(msg):
     for response in msg:
         if isinstance(response, tuple):
             # parse a bytes email into a message object
