@@ -18,6 +18,8 @@ def create_file_path_for(subject, filename):
 def get_subject(msg):
     # decode the email subject
     subject, encoding = decode_header(msg["Subject"])[0]
+    if encoding == None:
+        encoding = 'utf-8'
     if isinstance(subject, bytes):
         # if it's a bytes, decode to str
         subject = subject.decode(encoding)
