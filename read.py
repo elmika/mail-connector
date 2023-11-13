@@ -1,7 +1,7 @@
 import imaplib
 
 from config import IMAP_URL, IMAP_USERNAME, IMAP_PASSWORD
-from process_email import process_email
+from process_email import process_email, show_email
 
 username = IMAP_USERNAME
 password = IMAP_PASSWORD
@@ -14,7 +14,7 @@ imap.login(username, password)
 
 status, messages = imap.select("INBOX")
 # number of top emails to fetch
-N = 3
+N = 13
 # total number of emails
 messages = int(messages[0])
 
@@ -22,7 +22,8 @@ messages = int(messages[0])
 for i in range(messages, max(messages-N, 0), -1):
 	# fetch the email message by ID
 	res, msg = imap.fetch(str(i), "(RFC822)")
-	process_email(msg)
+	# process_email(msg)
+	show_email(msg)
 
 # close the connection and logout
 imap.close()

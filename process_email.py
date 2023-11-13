@@ -98,3 +98,14 @@ def process_email(msg):
 
             print("="*100)
     return
+
+def show_email(msg):
+    for response in msg:
+        if isinstance(response, tuple):
+            # parse a bytes email into a message object
+            msg = email.message_from_bytes(response[1])
+            print("Subject:", get_subject(msg))
+            print("From:", get_from(msg))
+
+            print("="*100)
+    return
