@@ -62,6 +62,60 @@ def download_html(body, subject):
 def get_email_body(msg_or_part):
     return msg_or_part.get_payload(decode=True).decode()
 
+# returns an email dictionary
+def extract_email(msg):
+    msg_list = []
+    for response in msg:
+        if isinstance(response, tuple):
+            single_message = {}
+            # parse a bytes email into a message object
+            msg = email.message_from_bytes(response[1])
+            single_message['subject'] = get_subject(msg);
+            single_message['from'] = get_from(msg);            
+            
+            # if the email message is multipart
+            if msg.is_multipart():
+                # iterate over email parts
+                for part in msg.walk():
+                    content_type = part.get_content_type()
+                    try:                         
+                        body = get_email_body(part)
+                    except:
+                        pass
+
+                    single_message['has_attachment'] = has_attachment(part);     
+                    if is_plain_text_body(part):
+                        single_message['text_body'] = body;
+                    elif has_attachment(part):                        
+                        download_attachment(part, get_subject(msg))
+            else:
+                content_type = msg.get_content_type()
+                body = get_email_body(msg)
+                if content_type == "text/plain":
+                    single_message['text_body'] = body;
+
+            # This is a bit shaggy... It will read content type of last multipart message.
+            # if content_type == "text/html":
+            #    filepath = download_html(body, get_subject(msg))
+                # open in the default browser
+            #    webbrowser.open(filepath)
+
+            msg_list.append(single_message);
+    return msg_list
+
+# Display an email dictionary
+def print_extracted_email(msg_list):
+    for msg in msg_list:
+
+            print("Subject:", msg['subject'])
+            print("From:", msg['from'])
+            print("Has attachment:", msg['has_attachment'])
+            print("Has body:", 'text_body' in msg.keys())
+            # print("Has HTML body:", 'html_body' in msg.keys())
+
+            print("="*100)
+    return
+
 def process_email(msg):
     for response in msg:
         if isinstance(response, tuple):
@@ -95,17 +149,6 @@ def process_email(msg):
                 filepath = download_html(body, get_subject(msg))
                 # open in the default browser
                 webbrowser.open(filepath)
-
-            print("="*100)
-    return
-
-def show_email(msg):
-    for response in msg:
-        if isinstance(response, tuple):
-            # parse a bytes email into a message object
-            msg = email.message_from_bytes(response[1])
-            print("Subject:", get_subject(msg))
-            print("From:", get_from(msg))
 
             print("="*100)
     return

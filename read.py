@@ -1,7 +1,7 @@
 import imaplib
 
 from config import IMAP_URL, IMAP_USERNAME, IMAP_PASSWORD
-from process_email import process_email, show_email
+from process_email import process_email, extract_email, print_extracted_email
 
 username = IMAP_USERNAME
 password = IMAP_PASSWORD
@@ -23,7 +23,8 @@ for i in range(messages, max(messages-N, 0), -1):
 	# fetch the email message by ID
 	res, msg = imap.fetch(str(i), "(RFC822)")
 	# process_email(msg)
-	show_email(msg)
+	list = extract_email(msg)
+	print_extracted_email(list)
 
 # close the connection and logout
 imap.close()
