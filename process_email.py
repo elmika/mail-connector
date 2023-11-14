@@ -95,11 +95,9 @@ def extract_email(msg):
                     single_message['text_body'] = body;
 
             # This is a bit shaggy... It will read content type of last multipart message.
-            # if content_type == "text/html":
-            #    filepath = download_html(body, get_subject(msg))
-                # open in the default browser
-            #    webbrowser.open(filepath)
-
+            if content_type == "text/html":
+                single_message['html_body'] = body;
+            
             msg_list.append(single_message);
     return msg_list
 
@@ -111,7 +109,11 @@ def print_extracted_email(msg_list):
             print("From:", msg['from'])
             print("Has attachment:", msg['has_attachment'])
             print("Has body:", 'text_body' in msg.keys())
-            # print("Has HTML body:", 'html_body' in msg.keys())
+            if 'text_body' in msg.keys():
+                print("Start:", msg['text_body'][0:55])
+            print("Has HTML body:", 'html_body' in msg.keys())
+            if 'text_body' in msg.keys():
+                print("HTML Start:", msg['html_body'][0:25])
 
             print("="*100)
     return
